@@ -118,7 +118,9 @@ class Board: NSObject, NSCopying {
         //traverse through empty slots
         for row in 0...n-1 {
             for col in 0...n-1 {
-                if board.grid[row][col] == " " {
+                if board.isEmpty(row: row, col: col) {
+                    print("row: \(row) col: \(col)")
+                    
                    //When found empty spot - make move variable for this slot
                     let move = Move(row: row, col: col)
                     //set empty slot to this move
@@ -132,12 +134,12 @@ class Board: NSObject, NSCopying {
                         let finalScore = miniMax(board: board, player: "X")
                         move.score = finalScore
                     }
-                    
                     //reset and open up spot again
                     board.addMove(row: row, col: col, p: " ")
                     
                     //append move to the array
                     moves.append(move)
+                    print("\(move.score)")
                 }
                 
             }
@@ -164,11 +166,11 @@ class Board: NSObject, NSCopying {
         
         nextCompMove = bestMove
         
-        return 1
+        return 0
     }
     
 
-    func checkEmpty(row: Int, col: Int) -> Bool{
+    func isEmpty(row: Int, col: Int) -> Bool{
         if grid[row][col] == " " {
             return true
         }

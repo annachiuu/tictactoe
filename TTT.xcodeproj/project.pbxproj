@@ -28,9 +28,9 @@
 /* Begin PBXFileReference section */
 		8447742D1F7CBB60007857EF /* TTT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TTT; sourceTree = BUILT_PRODUCTS_DIR; };
 		844774301F7CBB60007857EF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		844774371F7CBBC8007857EF /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Board.swift; path = "../../../Downloads/tictactoe-master/tictactoe-VectrVentures/Board.swift"; sourceTree = "<group>"; };
-		844774391F7CBC77007857EF /* references.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = references.swift; path = "../../../Downloads/tictactoe-master/tictactoe-VectrVentures/references.swift"; sourceTree = "<group>"; };
-		8447743A1F7CBC77007857EF /* Moves.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Moves.swift; path = "../../../Downloads/tictactoe-master/tictactoe-VectrVentures/Moves.swift"; sourceTree = "<group>"; };
+		844774371F7CBBC8007857EF /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		844774391F7CBC77007857EF /* references.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = references.swift; sourceTree = "<group>"; };
+		8447743A1F7CBC77007857EF /* Moves.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moves.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

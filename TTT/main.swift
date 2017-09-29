@@ -18,7 +18,7 @@ let comp = "X"
 var row = 0
 var col = 0
 
-var currentPlayer = human
+var currentPlayer = comp
 
 func switchPlayer() {
     if currentPlayer == human {
@@ -45,10 +45,9 @@ func humanInsert() {
 
 func humanTurn() {
     humanInsert()
-    while(mboard.checkEmpty(row: row, col: col)){
+    while(mboard.isEmpty(row: row, col: col)){
         mboard.addMove(row: Int(row), col: Int(col), p: human)
         print(mboard.printGrid())
-        switchPlayer()
         }
     }
 
@@ -57,7 +56,6 @@ func compTurn() {
     print("computer plays: row:\(mboard.nextCompMove.row)  col:\(mboard.nextCompMove.row) \n")
     mboard.addMove(row: mboard.nextCompMove.row, col: mboard.nextCompMove.col, p: comp)
     print(mboard.printGrid())
-    switchPlayer()
 }
 
 //GAME PLAY HERE
@@ -74,6 +72,8 @@ while(!mboard.fullCount()) {
             exit(0)
         }
     }
+    
+    switchPlayer()
     
     if currentPlayer == human {
         humanTurn()
