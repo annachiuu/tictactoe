@@ -56,8 +56,9 @@ func compTurn() {
     print("computer plays: row:\(move.row)  col:\(move.row) \n")
     mboard.addMove(row: move.row, col: move.col, p: comp)
     print(mboard.printGrid())
-}
-
+    
+    }
+ 
 //GAME PLAY HERE
 while(!mboard.fullCount()) {
     if(mboard.checkWin(player: currentPlayer)) {
