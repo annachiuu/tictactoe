@@ -13,6 +13,7 @@ class Move: NSCopying {
     var row: Int
     var col: Int
     var score: Int?
+    var depth: Int?
     
     init(row: Int, col: Int) {
         self.row = row
