@@ -274,3 +274,5 @@ class Board: NSObject, NSCopying {
     
 }
 
+//This is branch new-miniMax
+
