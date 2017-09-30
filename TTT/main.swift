@@ -57,10 +57,8 @@ func compTurn() {
     mboard.addMove(row: move.row, col: move.col, p: comp)
     print(mboard.printGrid())
     
-    //reset the depth
-    mboard.depth = 0
-}
-
+    }
+ 
 //GAME PLAY HERE
 while(!mboard.fullCount()) {
     if(mboard.checkWin(player: currentPlayer)) {

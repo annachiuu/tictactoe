@@ -23,9 +23,9 @@ class Board: NSObject, NSCopying {
     
     func makeGrid(n: Int) {
         self.n = n
-        for col in 1...n {
+        for _ in 1...n { //each col
             var columnArray = Array<String>()
-            for row in 1...n {
+            for _ in 1...n { //each row
                 columnArray.append(" ")
             }
             
@@ -48,7 +48,7 @@ class Board: NSObject, NSCopying {
             }
             if row != n-1 {
             gridOutput = gridOutput + "\n"
-            for i in 1...n {
+                for _ in 1...n {
                 gridOutput = gridOutput + " -  "
             }
             gridOutput = gridOutput + "\n"
@@ -64,6 +64,17 @@ class Board: NSObject, NSCopying {
         self.grid[row][col] = p
     }
     
+    func numberEmpty() -> Int{
+        var count = 0
+        for _ in 0...n-1 {
+            for _ in 0...n-1 {
+                if grid.isEmpty {
+                    count = count + 1
+                }
+            }
+        }
+        return count
+    }
     
     func checkWin(player: String) -> Bool {
         //for each row, count and see if there is a full row
@@ -159,11 +170,11 @@ class Board: NSObject, NSCopying {
     
     //#############################################################
     
+    
+  
     //count the depth of the recursion so the best move takes the least moves
-    var depth = 0
 
     func miniMax(board: Board, player: String) -> Move {
-        depth = depth + 1
     
         var moves = [Move]()
         
@@ -171,17 +182,17 @@ class Board: NSObject, NSCopying {
         if board.checkWin(player: p1) {
             //temp Move to pass the score back up the recursion
             let tempMove = Move(row: 0, col: 0)
+            tempMove.depth = n-board.numberEmpty()
             tempMove.updateScore(score: 10)
-            tempMove.depth = depth
             return tempMove
         } else if board.checkWin(player: p2) {
             let tempMove = Move(row: 0, col: 0)
+            tempMove.depth = n-board.numberEmpty()
             tempMove.updateScore(score: -10)
-            tempMove.depth = depth
             return tempMove
         } else if board.fullCount() {
             let move = Move(row: 0, col: 0)
-            move.depth = depth
+            move.depth = n-board.numberEmpty()
             move.score = 0
             return move
         }
@@ -195,17 +206,17 @@ class Board: NSObject, NSCopying {
                     
                     // init move and take down coords
                     var move = Move(row: row, col: col)
+                    // store the depth of the board
+                    move.depth = n-board.numberEmpty()
                     board.addMove(row: row, col: col, p: player)
                     
                     //recursion to get score from terminating nodes
                     if player == p1 {
                         let returnedMove = miniMax(board: board, player: p2)
                         move.score = returnedMove.score
-                        move.depth = returnedMove.depth
                     } else {
                         let returnedMove = miniMax(board: board, player: p1)
                         move.score = returnedMove.score
-                        move.depth = returnedMove.depth
                     }
                     
                     //reset board
@@ -218,7 +229,7 @@ class Board: NSObject, NSCopying {
             }
         }
         var bestMove = Move(row: 0, col: 0)
-        bestMove.depth = 0
+        bestMove.depth = n+1
 
         //chose the (best) move according to player
         if player == p1 {
@@ -244,8 +255,7 @@ class Board: NSObject, NSCopying {
             }
         }
         
-        
-        
+        //update the move with current depth of board
         return bestMove
     }
     
