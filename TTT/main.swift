@@ -6,6 +6,15 @@
 //  Copyright © 2017 Anna Chiu. All rights reserved.
 //
 
+
+// TO DO LIST //
+/*
+ • Must have at least 3N
+ • Switch row and col to 1 - N (instead of 0-N-1)
+ • When entering row and column only allow for empty spots - else reenter
+ • Make replay game option
+ */
+
 import Foundation
 import Darwin
 
