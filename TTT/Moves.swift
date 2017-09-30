@@ -29,4 +29,9 @@ class Move: NSCopying {
         self.score = score
     }
     
+    func updateMove(move: Move) {
+        self.row = move.row
+        self.col = move.col
+        self.score = move.score
+    }
 }

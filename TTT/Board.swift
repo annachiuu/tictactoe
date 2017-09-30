@@ -226,17 +226,26 @@ class Board: NSObject, NSCopying {
         return copy
     }
     
-    func miniMax2(board: Board, player: String) -> [Move] {
+    //#############################################################
+
+    func miniMax2(board: Board, player: String) -> Move {
     
         var moves = [Move]()
         
         //stopping condition
         if board.checkWin(player: p1) {
-            return moves
+            //temp Move to pass the score back up the recursion
+            let tempMove = Move(row: 0, col: 0)
+            tempMove.updateScore(score: 10)
+            return tempMove
         } else if board.checkWin(player: p2) {
-            return moves
+            let tempMove = Move(row: 0, col: 0)
+            tempMove.updateScore(score: -10)
+            return tempMove
         } else if board.fullCount() {
-            return moves
+            let move = Move(row: 0, col: 0)
+            move.score = 0
+            return move
         }
         
         
@@ -251,9 +260,13 @@ class Board: NSObject, NSCopying {
                     board.addMove(row: row, col: col, p: player)
                     
                     //recursion to get score from terminating nodes
-                    //
-                    //
-                    //
+                    if player == p1 {
+                        let score = miniMax2(board: board, player: p2).score
+                        move.score = score
+                    } else {
+                        let score = miniMax2(board: board, player: p1).score
+                        move.score = score
+                    }
                     
                     //reset board
                     board.addMove(row: row, col: col, p: empty)
@@ -264,15 +277,30 @@ class Board: NSObject, NSCopying {
                 }
             }
         }
+        var bestMove = Move(row: 0, col: 0)
+
+        //chose the (best) move according to player
+        if player == p1 {
+            bestMove.updateScore(score: -9999)
+            for move in moves {
+                if move.score! > bestMove.score! {
+                    bestMove.updateMove(move: move)
+                }
+            }
+        } else if player == p2 {
+            bestMove.updateScore(score: 9999)
+            for move in moves {
+                if move.score! < bestMove.score! {
+                    bestMove.updateMove(move: move)
+                }
+            }
+        }
         
         
         
-        
-        
-        return moves
+        return bestMove
     }
     
 }
 
-//This is branch new-miniMax
 
