@@ -14,6 +14,7 @@ class Board: NSObject, NSCopying {
     
     var p1 = "X"
     var p2 = "O"
+    var empty = " "
     var currentPlayer = "X"
     
     var n: Int!
@@ -91,7 +92,7 @@ class Board: NSObject, NSCopying {
         
         for row in 0...n-1 {
             for col in 0...n-1 {
-                if grid[row][col] == " " {
+                if grid[row][col] == empty {
                     return false
                 }
             }
@@ -99,7 +100,7 @@ class Board: NSObject, NSCopying {
         return true
     }
         
-
+    //call this function to get best move
     func miniMax(board: Board, player: String) -> Int {
         
         //check for win/lose states (stopping conditions)
@@ -113,19 +114,16 @@ class Board: NSObject, NSCopying {
         
         //array of available moves
         var moves = [Move]()
-        
 
         //traverse through empty slots
-        for row in 0...n-1 {
+            for row in 0...n-1 {
             for col in 0...n-1 {
                 if board.isEmpty(row: row, col: col) {
-                    print("row: \(row) col: \(col)")
                     
                    //When found empty spot - make move variable for this slot
                     let move = Move(row: row, col: col)
                     //set empty slot to this move
                     board.addMove(row: row, col: col, p: player)
-
                     
                     if player == "X" { //call minimax on human
                         let finalScore = miniMax(board: board, player: "O")
@@ -135,17 +133,19 @@ class Board: NSObject, NSCopying {
                         move.score = finalScore
                     }
                     //reset and open up spot again
-                    board.addMove(row: row, col: col, p: " ")
+                    board.addMove(row: row, col: col, p: empty)
                     
                     //append move to the array
                     moves.append(move)
-                    print("\(move.score)")
+//                    print("\(move.score)")
                 }
                 
             }
         }
         
         var bestMove = Move(row: 0, col: 0)
+        
+        //find highest score
         if player == "X" {
             var bestScore = -9999
             for move in moves {
@@ -171,7 +171,7 @@ class Board: NSObject, NSCopying {
     
 
     func isEmpty(row: Int, col: Int) -> Bool{
-        if grid[row][col] == " " {
+        if grid[row][col] == empty {
             return true
         }
         return false
@@ -226,6 +226,51 @@ class Board: NSObject, NSCopying {
         return copy
     }
     
+    func miniMax2(board: Board, player: String) -> [Move] {
+    
+        var moves = [Move]()
+        
+        //stopping condition
+        if board.checkWin(player: p1) {
+            return moves
+        } else if board.checkWin(player: p2) {
+            return moves
+        } else if board.fullCount() {
+            return moves
+        }
+        
+        
+        
+        //traverse through empty slots
+        for row in 0...n-1 {
+            for col in 0...n-1 {
+                if board.isEmpty(row: row, col: col) {
+                    
+                    // init move and take down coords
+                    var move = Move(row: row, col: col)
+                    board.addMove(row: row, col: col, p: player)
+                    
+                    //recursion to get score from terminating nodes
+                    //
+                    //
+                    //
+                    
+                    //reset board
+                    board.addMove(row: row, col: col, p: empty)
+                    
+                    //append move to moves
+                    moves.append(move)
+                    
+                }
+            }
+        }
+        
+        
+        
+        
+        
+        return moves
+    }
     
 }
 
