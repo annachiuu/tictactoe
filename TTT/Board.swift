@@ -14,6 +14,7 @@ class Board: NSObject, NSCopying {
     
     var p1 = "X"
     var p2 = "O"
+    var empty = " "
     var currentPlayer = "X"
     
     var n: Int!
@@ -22,9 +23,9 @@ class Board: NSObject, NSCopying {
     
     func makeGrid(n: Int) {
         self.n = n
-        for col in 1...n {
+        for _ in 1...n { //each col
             var columnArray = Array<String>()
-            for row in 1...n {
+            for _ in 1...n { //each row
                 columnArray.append(" ")
             }
             
@@ -47,7 +48,7 @@ class Board: NSObject, NSCopying {
             }
             if row != n-1 {
             gridOutput = gridOutput + "\n"
-            for i in 1...n {
+                for _ in 1...n {
                 gridOutput = gridOutput + " -  "
             }
             gridOutput = gridOutput + "\n"
@@ -63,6 +64,17 @@ class Board: NSObject, NSCopying {
         self.grid[row][col] = p
     }
     
+    func numberEmpty() -> Int{
+        var count = 0
+        for _ in 0...n-1 {
+            for _ in 0...n-1 {
+                if grid.isEmpty {
+                    count = count + 1
+                }
+            }
+        }
+        return count
+    }
     
     func checkWin(player: String) -> Bool {
         //for each row, count and see if there is a full row
@@ -91,87 +103,17 @@ class Board: NSObject, NSCopying {
         
         for row in 0...n-1 {
             for col in 0...n-1 {
-                if grid[row][col] == " " {
+                if grid[row][col] == empty {
                     return false
                 }
             }
         }
         return true
     }
-        
-
-    func miniMax(board: Board, player: String) -> Int {
-        
-        //check for win/lose states (stopping conditions)
-        if board.checkWin(player: "X") {
-            return 10
-        } else if board.checkWin(player: "O") {
-            return -10
-        } else if board.fullCount() {
-            return 0
-        }
-        
-        //array of available moves
-        var moves = [Move]()
-        
-
-        //traverse through empty slots
-        for row in 0...n-1 {
-            for col in 0...n-1 {
-                if board.isEmpty(row: row, col: col) {
-                    print("row: \(row) col: \(col)")
-                    
-                   //When found empty spot - make move variable for this slot
-                    let move = Move(row: row, col: col)
-                    //set empty slot to this move
-                    board.addMove(row: row, col: col, p: player)
-
-                    
-                    if player == "X" { //call minimax on human
-                        let finalScore = miniMax(board: board, player: "O")
-                        move.score = finalScore
-                    } else {  //call minimax on comp
-                        let finalScore = miniMax(board: board, player: "X")
-                        move.score = finalScore
-                    }
-                    //reset and open up spot again
-                    board.addMove(row: row, col: col, p: " ")
-                    
-                    //append move to the array
-                    moves.append(move)
-                    print("\(move.score)")
-                }
-                
-            }
-        }
-        
-        var bestMove = Move(row: 0, col: 0)
-        if player == "X" {
-            var bestScore = -9999
-            for move in moves {
-                if move.score! > bestScore {
-                    bestScore = move.score!
-                    bestMove = move
-                }
-            }
-        } else {
-            var bestScore = 9999
-            for move in moves {
-                if move.score! < bestScore {
-                    bestScore = move.score!
-                    bestMove = move
-                }
-            }
-        }
-        
-        nextCompMove = bestMove
-        
-        return 0
-    }
     
 
     func isEmpty(row: Int, col: Int) -> Bool{
-        if grid[row][col] == " " {
+        if grid[row][col] == empty {
             return true
         }
         return false
@@ -226,6 +168,97 @@ class Board: NSObject, NSCopying {
         return copy
     }
     
+    //#############################################################
+    
+    
+  
+    //count the depth of the recursion so the best move takes the least moves
+
+    func miniMax(board: Board, player: String) -> Move {
+    
+        var moves = [Move]()
+        
+        //stopping conditions
+        if board.checkWin(player: p1) {
+            //temp Move to pass the score back up the recursion
+            let tempMove = Move(row: 0, col: 0)
+            tempMove.depth = n-board.numberEmpty()
+            tempMove.updateScore(score: 10)
+            return tempMove
+        } else if board.checkWin(player: p2) {
+            let tempMove = Move(row: 0, col: 0)
+            tempMove.depth = n-board.numberEmpty()
+            tempMove.updateScore(score: -10)
+            return tempMove
+        } else if board.fullCount() {
+            let move = Move(row: 0, col: 0)
+            move.depth = n-board.numberEmpty()
+            move.score = 0
+            return move
+        }
+        
+        
+        
+        //traverse through empty slots
+        for row in 0...n-1 {
+            for col in 0...n-1 {
+                if board.isEmpty(row: row, col: col) {
+                    
+                    // init move and take down coords
+                    var move = Move(row: row, col: col)
+                    // store the depth of the board
+                    move.depth = n-board.numberEmpty()
+                    board.addMove(row: row, col: col, p: player)
+                    
+                    //recursion to get score from terminating nodes
+                    if player == p1 {
+                        let returnedMove = miniMax(board: board, player: p2)
+                        move.score = returnedMove.score
+                    } else {
+                        let returnedMove = miniMax(board: board, player: p1)
+                        move.score = returnedMove.score
+                    }
+                    
+                    //reset board
+                    board.addMove(row: row, col: col, p: empty)
+                    
+                    //append move to moves
+                    moves.append(move)
+                    
+                }
+            }
+        }
+        var bestMove = Move(row: 0, col: 0)
+        bestMove.depth = n+1
+
+        //chose the (best) move according to player
+        if player == p1 {
+            bestMove.updateScore(score: -9999)
+            for move in moves {
+                //choose highest score for computer
+                if move.score! >= bestMove.score! {
+                    //if both moves recieve same high score, choose that with the fast win
+                    if move.depth! < bestMove.depth! {
+                        bestMove.updateMove(move: move)
+                    }
+                }
+            }
+        } else if player == p2 {
+            bestMove.updateScore(score: 9999)
+            for move in moves {
+                //chose lowest score for human
+                if move.score! <= bestMove.score! {
+                    if move.depth! < bestMove.depth! {
+                        bestMove.updateMove(move: move)
+                    }
+                }
+            }
+        }
+        
+        //update the move with current depth of board
+        return bestMove
+    }
     
 }
+
 

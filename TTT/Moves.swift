@@ -13,6 +13,7 @@ class Move: NSCopying {
     var row: Int
     var col: Int
     var score: Int?
+    var depth: Int?
     
     init(row: Int, col: Int) {
         self.row = row
@@ -29,4 +30,9 @@ class Move: NSCopying {
         self.score = score
     }
     
+    func updateMove(move: Move) {
+        self.row = move.row
+        self.col = move.col
+        self.score = move.score
+    }
 }
