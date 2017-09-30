@@ -99,75 +99,6 @@ class Board: NSObject, NSCopying {
         }
         return true
     }
-        
-    //call this function to get best move
-    func miniMax(board: Board, player: String) -> Int {
-        
-        //check for win/lose states (stopping conditions)
-        if board.checkWin(player: "X") {
-            return 10
-        } else if board.checkWin(player: "O") {
-            return -10
-        } else if board.fullCount() {
-            return 0
-        }
-        
-        //array of available moves
-        var moves = [Move]()
-
-        //traverse through empty slots
-            for row in 0...n-1 {
-            for col in 0...n-1 {
-                if board.isEmpty(row: row, col: col) {
-                    
-                   //When found empty spot - make move variable for this slot
-                    let move = Move(row: row, col: col)
-                    //set empty slot to this move
-                    board.addMove(row: row, col: col, p: player)
-                    
-                    if player == "X" { //call minimax on human
-                        let finalScore = miniMax(board: board, player: "O")
-                        move.score = finalScore
-                    } else {  //call minimax on comp
-                        let finalScore = miniMax(board: board, player: "X")
-                        move.score = finalScore
-                    }
-                    //reset and open up spot again
-                    board.addMove(row: row, col: col, p: empty)
-                    
-                    //append move to the array
-                    moves.append(move)
-//                    print("\(move.score)")
-                }
-                
-            }
-        }
-        
-        var bestMove = Move(row: 0, col: 0)
-        
-        //find highest score
-        if player == "X" {
-            var bestScore = -9999
-            for move in moves {
-                if move.score! > bestScore {
-                    bestScore = move.score!
-                    bestMove = move
-                }
-            }
-        } else {
-            var bestScore = 9999
-            for move in moves {
-                if move.score! < bestScore {
-                    bestScore = move.score!
-                    bestMove = move
-                }
-            }
-        }
-        
-        nextCompMove = bestMove
-        
-        return 0
-    }
     
 
     func isEmpty(row: Int, col: Int) -> Bool{
@@ -228,7 +159,7 @@ class Board: NSObject, NSCopying {
     
     //#############################################################
 
-    func miniMax2(board: Board, player: String) -> Move {
+    func miniMax(board: Board, player: String) -> Move {
     
         var moves = [Move]()
         
@@ -261,10 +192,10 @@ class Board: NSObject, NSCopying {
                     
                     //recursion to get score from terminating nodes
                     if player == p1 {
-                        let score = miniMax2(board: board, player: p2).score
+                        let score = miniMax(board: board, player: p2).score
                         move.score = score
                     } else {
-                        let score = miniMax2(board: board, player: p1).score
+                        let score = miniMax(board: board, player: p1).score
                         move.score = score
                     }
                     

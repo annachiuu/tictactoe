@@ -52,7 +52,7 @@ func humanTurn() {
     }
 
 func compTurn() {
-    let move = mboard.miniMax2(board: mboard, player: comp)
+    let move = mboard.miniMax(board: mboard, player: comp)
     print("computer plays: row:\(move.row)  col:\(move.row) \n")
     mboard.addMove(row: move.row, col: move.col, p: comp)
     print(mboard.printGrid())
