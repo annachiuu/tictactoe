@@ -9,7 +9,7 @@
 
 // TO DO LIST //
 /*
- • Must have at least 3N
+ • Must have at least 3N (DONE)
  • Switch row and col to 1 - N (instead of 0-N-1)
  • When entering row and column only allow for empty spots - else reenter
  • Make replay game option
@@ -37,11 +37,23 @@ func switchPlayer() {
     }
 }
 
-print("Tic Tac Toe")
-print("Please enter board size: ")
-let n = readLine()!
+print("Tic Tac Toe by Anna Chiu")
 
-mboard.makeGrid(n: Int(n)!)
+var nSize = 0
+while (nSize < 3 || nSize > 100) {
+    print("Please enter board size: ")
+    let num = Int(readLine()!)!
+    if (num != nil && (num > 3 && num <= 100)) {
+        nSize = num
+        break
+    } else if (num < 3 || num > 100) {
+        print("Invalid Integer - Please enter a whole number between 3 - 100")
+    } else {
+        print("Invalid Integer")
+    }
+}
+
+mboard.makeGrid(n: nSize)
 
 func humanInsert() {
     print("Where would you like to put your next move?")
