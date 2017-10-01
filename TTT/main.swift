@@ -42,12 +42,13 @@ print("Tic Tac Toe by Anna Chiu")
 var nSize = 0
 while (nSize < 3 || nSize > 100) {
     print("Please enter board size: ")
-    let num = Int(readLine()!)!
-    if (num != nil && (num > 3 && num <= 100)) {
-        nSize = num
-        break
-    } else if (num < 3 || num > 100) {
-        print("Invalid Integer - Please enter a whole number between 3 - 100")
+    if let num = Int(readLine()!) {
+        if (num != nil && (num > 3 && num <= 100)) {
+            nSize = num
+            break
+        } else if (num < 3 || num > 100) {
+            print("Invalid Integer - Please enter a whole number between 3 - 100")
+        }
     } else {
         print("Invalid Integer")
     }
