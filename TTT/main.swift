@@ -7,13 +7,6 @@
 //
 
 
-// TO DO LIST - branch: main-defense //
-/*
- • Must have at least 3N (DONE)
- • Switch row and col to 1 - N (instead of 0-N-1) and add defensive programming (DONE)
- • When entering row and column only allow for empty spots - else reenter (DONE)
- */
-
 import Foundation
 import Darwin
 
