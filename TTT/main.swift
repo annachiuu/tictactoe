@@ -6,10 +6,18 @@
 //  Copyright © 2017 Anna Chiu. All rights reserved.
 //
 
+
+// TO DO LIST - branch: main-defense //
+/*
+ • Must have at least 3N (DONE)
+ • Switch row and col to 1 - N (instead of 0-N-1) and add defensive programming (DONE)
+ • When entering row and column only allow for empty spots - else reenter (DONE)
+ */
+
 import Foundation
 import Darwin
 
-var mboard = Board() //init main board
+var board = Board() //init main board
 
 let human = "O"
 let comp = "X"
@@ -28,45 +36,90 @@ func switchPlayer() {
     }
 }
 
-print("Tic Tac Toe")
-print("Please enter board size: ")
-let n = readLine()!
+print("Tic Tac Toe by Anna Chiu")
 
-mboard.makeGrid(n: Int(n)!)
+var n = 0
+while (n < 3 || n > 100) {
+    print("Please enter board size: ")
+    if let num = Int(readLine()!) {
+        if (num != nil && (num >= 3 && num <= 100)) {
+            n = num
+            break
+        } else if (num < 3 || num > 100) {
+            print("Invalid Integer - Please enter a whole number between 3 - 100")
+        }
+    } else {
+        board.pInvalid()
+    }
+}
+
+board.makeGrid(n: n)
 
 func humanInsert() {
     print("Where would you like to put your next move?")
-    print("row:")
-    row = Int(readLine()!)!
-    print("col:")
-    col = Int(readLine()!)!
+    
+    repeat {
+        print("row:")
+        if let num = Int(readLine()!) {
+            if (num <= n && num > 0){
+                row = num-1
+            } else {
+                row = num-1
+                print("Please enter row number between 1 - \(n):")
+            }
+        } else {
+            board.pInvalid()
+        }
+    } while (row > n-1 || row < 0)
+    
+    repeat {
+        print("col:")
+        if let num = Int(readLine()!) {
+            if (num <= n && num > 0){
+                col = num-1
+            } else {
+                col = num-1
+                print("Please enter column number between 1 - \(n):")
+            }
+        } else {
+            board.pInvalid()
+        }
+    } while (col > n-1 || col < 0)
 }
 
 
 func humanTurn() {
-    humanInsert()
-    while(mboard.isEmpty(row: row, col: col)){
-        mboard.addMove(row: Int(row), col: Int(col), p: human)
-        print(mboard.printGrid())
+    var validMove = true
+    repeat {
+        humanInsert()
+        if (board.isEmpty(row: row, col: col)) {
+            validMove = true
+            board.addMove(row: Int(row), col: Int(col), p: human)
+            print(board.printGrid())
+        } else {
+            validMove = false
+            print("Invalid move, please choose another cell")
+            print(board.printGrid()) //print board again for reference
         }
-    }
+    } while validMove == false
+}
 
 func compTurn() {
-    let move = mboard.miniMax(board: mboard, player: comp)
-    print("computer plays: row:\(move.row)  col:\(move.row) \n")
-    mboard.addMove(row: move.row, col: move.col, p: comp)
-    print(mboard.printGrid())
+    let move = board.miniMax(board: board, player: comp)
+    print("computer plays: row:\(move.row+1)  col:\(move.row+1) \n")
+    board.addMove(row: move.row, col: move.col, p: comp)
+    print(board.printGrid())
     
     }
  
 //GAME PLAY HERE
-while(!mboard.fullCount()) {
-    if(mboard.checkWin(player: currentPlayer)) {
+while(!board.fullCount()) {
+    if(board.checkWin(player: currentPlayer)) {
         if currentPlayer == human {
             print("You Win!!")
             exit(0)
         } else if currentPlayer == comp {
-            print("Comp Win")
+            print("Computer Wins")
             exit(0)
         } else {
             print("Draw")
@@ -82,5 +135,6 @@ while(!mboard.fullCount()) {
         compTurn()
     }
 }
+
 
 
