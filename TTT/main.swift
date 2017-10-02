@@ -114,6 +114,7 @@ func compTurn() {
  
 //GAME PLAY HERE
 while(!board.fullCount()) {
+    
     if(board.checkWin(player: currentPlayer)) {
         if currentPlayer == human {
             print("You Win!!")
@@ -121,11 +122,9 @@ while(!board.fullCount()) {
         } else if currentPlayer == comp {
             print("Computer Wins")
             exit(0)
-        } else {
-            print("Draw")
-            exit(0)
         }
     }
+    
     
     switchPlayer()
     
@@ -133,6 +132,11 @@ while(!board.fullCount()) {
         humanTurn()
     } else {
         compTurn()
+    }
+    
+    if board.fullCount() {
+        print("Draw")
+        exit(0)
     }
 }
 
