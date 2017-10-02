@@ -11,4 +11,5 @@
  
  Swift command line tutorial: https://www.raywenderlich.com/163134/command-line-programs-macos-tutorial-2
  
+ alpha - beta pruning: https://www.ntu.edu.sg/home/ehchua/programming/java/JavaGame_TicTacToe_AI.html#zz-1.6
  */

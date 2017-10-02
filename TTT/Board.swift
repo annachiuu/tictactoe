@@ -174,7 +174,7 @@ class Board: NSObject, NSCopying {
   
     //count the depth of the recursion so the best move takes the least moves
 
-    func miniMax(board: Board, player: String) -> Move {
+    func miniMax(board: Board, player: String, alpha: Int, beta: Int) -> Move {
     
         var moves = [Move]()
         
@@ -212,11 +212,15 @@ class Board: NSObject, NSCopying {
                     
                     //recursion to get score from terminating nodes
                     if player == p1 {
-                        let returnedMove = miniMax(board: board, player: p2)
+                        let returnedMove = miniMax(board: board, player: p2, alpha: alpha, beta: beta)
                         move.score = returnedMove.score
+                        if move.score! > alpha { move.score = alpha }
+                        if alpha >= beta {break}
                     } else {
-                        let returnedMove = miniMax(board: board, player: p1)
+                        let returnedMove = miniMax(board: board, player: p1, alpha: alpha, beta: beta)
                         move.score = returnedMove.score
+                        if move.score! < beta {move.score = beta }
+                        if alpha >= beta {break}
                     }
                     
                     //reset board
