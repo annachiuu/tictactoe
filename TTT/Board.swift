@@ -1,4 +1,4 @@
-//
+
 //  board.swift
 //  tictactoe-VectrVentures
 //
@@ -259,6 +259,9 @@ class Board: NSObject, NSCopying {
         return bestMove
     }
     
+    func pInvalid() {
+        print("Invalid Integer")
+    }
 }
 
 
