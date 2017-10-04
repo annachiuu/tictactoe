@@ -41,15 +41,23 @@ class Board: NSObject, NSCopying {
     
     func printGrid() -> String {
         
-        var gridOutput = ""
+        var gridOutput = " "
         for n in 1...n {
-            gridOutput = gridOutput + "  \(n) "
+            if n < 10 {
+                gridOutput = gridOutput + "  \(n) "
+            } else {
+                gridOutput = gridOutput + " \(n) "
+            }
         }
         
         gridOutput = gridOutput + "\n"
         
         for row in 0...n-1 {
-            gridOutput = gridOutput + "\(row + 1) "
+            if row < 10 {
+                gridOutput = gridOutput + "\(row + 1)  "
+            } else {
+                gridOutput = gridOutput + "\(row + 1) "
+            }
             for col in 0...n-1 {
                 if col != n-1 {
                 gridOutput = gridOutput + grid[row][col] + " | "
