@@ -10,7 +10,8 @@
 import Foundation
 import Darwin
 
-var board = Board() //init main board
+//Init board class
+var board = Board()
 
 let human = "O"
 let comp = "X"
@@ -19,7 +20,7 @@ let comp = "X"
 var row = 0
 var col = 0
 
-var currentPlayer = comp
+var currentPlayer = ""
 
 func switchPlayer() {
     if currentPlayer == human {
@@ -28,6 +29,9 @@ func switchPlayer() {
         currentPlayer = human
     }
 }
+
+
+//################## INITIALIZE BOARD WITH N #####################
 
 print("Tic Tac Toe by Anna Chiu")
 
@@ -47,6 +51,22 @@ while (n < 3 || n > 100) {
 }
 
 board.makeGrid(n: n)
+
+//###################### Choose starting player ###################
+
+
+var playerResponse = ""
+while (currentPlayer != human && currentPlayer != comp) {
+    print("Do you want to start first? \nPlease enter y/n: ")
+    playerResponse = readLine()!
+    if playerResponse == "y" || playerResponse == "Y" {
+        currentPlayer = human
+    } else if playerResponse == "n" || playerResponse == "N" {
+        currentPlayer = comp
+    }
+}
+
+//###############################################################
 
 func humanInsert() {
     print("Where would you like to put your next move?")
@@ -88,6 +108,8 @@ func humanTurn() {
         if (board.isEmpty(row: row, col: col)) {
             validMove = true
             board.addMove(row: Int(row), col: Int(col), p: human)
+            board.humanPreviousMove = Move(row: row, col: col)
+            board.blockNeeded = false
             print(board.printGrid())
         } else {
             validMove = false
@@ -98,8 +120,7 @@ func humanTurn() {
 }
 
 func compTurn() {
-    board.eval = 0
-    let move = board.miniMax(board: board, player: comp)
+    let move = board.findBestMove(board: board)
     print("computer plays: row:\(move.row+1)  col:\(move.col+1) \n")
     board.addMove(row: move.row, col: move.col, p: comp)
     print(board.printGrid())
@@ -115,13 +136,16 @@ func evaluateCondition() {
         exit(0)
     }
 }
- 
-//GAME PLAY HERE
+
+
+// ####################### GAME BEGINS HERE ########################
+
+print(board.printGrid())
+
 while(!board.fullCount()) {
     
     evaluateCondition()
     
-    switchPlayer()
     
     if currentPlayer == human {
         humanTurn()
@@ -135,6 +159,7 @@ while(!board.fullCount()) {
         print("Draw")
         exit(0)
     }
+    switchPlayer()
 }
 
 

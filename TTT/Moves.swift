@@ -1,6 +1,6 @@
 //
 //  Moves.swift
-//  tictactoe-VectrVentures
+//  tictactoe
 //
 //  Created by Anna Chiu on 9/28/17.
 //  Copyright © 2017 Anna Chiu. All rights reserved.
