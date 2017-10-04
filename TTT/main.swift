@@ -15,6 +15,8 @@ var board = Board() //init main board
 let human = "O"
 let comp = "X"
 
+let restart = ""
+
 //for human
 var row = 0
 var col = 0

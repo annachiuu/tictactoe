@@ -16,13 +16,15 @@ class Board: NSObject, NSCopying {
     var p2 = "O"
     var empty = " "
     var currentPlayer = "X"
-    
-    var humanPreviousMove = Move(row: 0, col: 0)
-    
+
     var n: Int!
     
     var nextCompMove = Move(row: 0, col: 0)
-    
+    var blockNeeded = false
+    var emergencyMove = Move(row: 0, col: 0)
+    var humanPreviousMove = Move(row: 0, col: 0)
+    var layer = 0
+    var emptyCells = [Move]()
     
     func makeGrid(n: Int) {
         self.n = n
@@ -248,8 +250,7 @@ class Board: NSObject, NSCopying {
 
     
   //#########################   Emergency Block when N-1 row / col is filled   ####################################
-    var blockNeeded = false
-    var emergencyMove = Move(row: 0, col: 0)
+
     
     //When remaining cells is > 10 and human is one move away from winning - find emergency block move
     func findBlock(origin: String, num: Int) {
@@ -296,7 +297,7 @@ class Board: NSObject, NSCopying {
             }
     }
   //######################  Find Edge Move According to Human Move ######################################
-    var layer = 0
+
     //Next computer move at the 4 edges of human's player - if all taken, work inwards
     func findEdgeMove(human: Move, layer: Int) -> Move{
         var top = Move(row: 0+layer, col: human.col)
@@ -344,8 +345,8 @@ class Board: NSObject, NSCopying {
         
         var bestMove = Move(row: 0, col: 0)
         
-        //if there are less than 10 cells left, then call miniMax
-        if numberEmpty() <= 9 {
+        //if there are less than 9 cells left and board n <= 5, or cells left <= 5 then call miniMax
+        if (numberEmpty() <= 9 && n <= 5) || (numberEmpty() <= 5) {
             getEmptyCells()
             return miniMax(board: board, player: p1)
         //if opponent has n-1 rows / cols filled, then BLOCK! or vice versa if winning opp, go for it!
@@ -369,7 +370,7 @@ class Board: NSObject, NSCopying {
     
 //    ####################### MINIMAX ###############################
     
-    var emptyCells = [Move]()
+
     func getEmptyCells() {
         for row in 0...n-1 {
             for col in 0...n-1 {
