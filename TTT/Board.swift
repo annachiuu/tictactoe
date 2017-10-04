@@ -170,9 +170,6 @@ class Board: NSObject, NSCopying {
     
     //#############################################################
     
-    
-  
-    //count the depth of the recursion so the best move takes the least moves
     var eval = 0
     
     func miniMax(board: Board, player: String) -> Move {
@@ -196,7 +193,7 @@ class Board: NSObject, NSCopying {
             return move
         }
         
-        
+        var bestMove = Move(row: 0, col: 0)
         
         //traverse through empty slots
         outerloop: for row in 0...n-1 {
@@ -206,7 +203,6 @@ class Board: NSObject, NSCopying {
                     // init move and take down coords
                     var move = Move(row: row, col: col)
                     // store the depth of the board
-                    move.depth = n-board.numberEmpty()
                     board.addMove(row: row, col: col, p: player)
                     
                     //recursion to get score from terminating nodes
@@ -224,7 +220,6 @@ class Board: NSObject, NSCopying {
                     //append move to moves
                     moves.append(move)
                     
-                    
                     //if p1 move.score = 10 then break
                     if move.score == 10 && player == p1 {
                         break outerloop
@@ -237,8 +232,7 @@ class Board: NSObject, NSCopying {
             }
         }
         
-        var bestMove = Move(row: 0, col: 0)
-
+        
         //chose the (best) move according to player
         if player == p1 {
             bestMove.updateScore(score: -9999)
@@ -257,7 +251,7 @@ class Board: NSObject, NSCopying {
                 }
             }
         }
-        
+    
         //update the move with current depth of board
         return bestMove
     }
