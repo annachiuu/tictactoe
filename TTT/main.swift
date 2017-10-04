@@ -98,8 +98,7 @@ func humanTurn() {
 }
 
 func compTurn() {
-    board.eval = 0
-    let move = board.miniMax(board: board, player: comp)
+    let move = board.findBestMove(board: board)
     print("computer plays: row:\(move.row+1)  col:\(move.col+1) \n")
     board.addMove(row: move.row, col: move.col, p: comp)
     print(board.printGrid())
@@ -115,7 +114,9 @@ func evaluateCondition() {
         exit(0)
     }
 }
- 
+
+print(board.printGrid())
+
 //GAME PLAY HERE
 while(!board.fullCount()) {
     

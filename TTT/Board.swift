@@ -31,7 +31,7 @@ class Board: NSObject, NSCopying {
             
             grid.append(columnArray)
         }
-        print(self.printGrid()) //^^^
+        saveCorners()
     }
     
     func printGrid() -> String {
@@ -66,9 +66,9 @@ class Board: NSObject, NSCopying {
     
     func numberEmpty() -> Int{
         var count = 0
-        for _ in 0...n-1 {
-            for _ in 0...n-1 {
-                if grid.isEmpty {
+        for row in 0...n-1 {
+            for col in 0...n-1 {
+                if grid[row][col] == empty {
                     count = count + 1
                 }
             }
@@ -127,7 +127,13 @@ class Board: NSObject, NSCopying {
             if grid[row][cell] == player {
                 count = count + 1
             }
-        }; return count
+        }
+        
+        if count == n-1 && numberEmpty() >= 10 {
+            blockNeeded = true
+            findBlock(origin: "rows" , num: row)
+        }
+        return count
     }
     
     func countCol(col: Int, player: String) -> Int {
@@ -136,7 +142,12 @@ class Board: NSObject, NSCopying {
             if grid[cell][col] == player {
                 count = count + 1
             }
-        }; return count
+        }
+        if count == n-1 && numberEmpty() >= 10 {
+            blockNeeded = true
+            findBlock(origin: "cols" , num: col)
+        }
+        return count
     }
     
     func countDiagLR(player: String) -> Int {
@@ -145,7 +156,8 @@ class Board: NSObject, NSCopying {
             if grid[cell][cell] == player {
                 count = count + 1
             }
-        }; return count
+        }
+        return count
     }
     
     func countDiagRL(player: String) -> Int {
@@ -156,7 +168,8 @@ class Board: NSObject, NSCopying {
                 count = count + 1
             }
             col = col - 1
-        }; return count
+        }
+        return count
     }
     
     //#############################################################
@@ -168,12 +181,95 @@ class Board: NSObject, NSCopying {
         return copy
     }
     
+    
+    
     //#############################################################
     
-    var eval = 0
+    var corners = [Move]()
+    var nextCorner = Move(row: 0, col: 0)
     
+    func saveCorners() {
+        let cornerTL = Move(row: 0, col: 0)
+        let cornerTR = Move(row: 0, col: n-1)
+        let cornerBL = Move(row: n-1, col: 0)
+        let cornerBR = Move(row: n-1, col: n-1)
+        
+        corners.append(cornerTL)
+        corners.append(cornerTR)
+        corners.append(cornerBL)
+        corners.append(cornerBR)
+    }
+    
+    func isCornersEmpty() -> Bool {
+        for corner in corners {
+            if grid[corner.row][corner.col] == empty {
+                nextCorner = corner
+                return true
+            }
+        }
+        return false
+    }
+
+    
+  //#############################################################
+    var blockNeeded = false
+    var emergencyMove = Move(row: 0, col: 0)
+    
+    //When remaining cells is > 10 and human is one move away from winning - find emergency block move
+    func findBlock(origin: String, num: Int) {
+
+            switch origin {
+            case "rows":
+                for col in 0...n-1 {
+                    if grid[num][col] == empty {
+                        let nextMove = Move(row: num, col: col)
+                        emergencyMove.updateMove(move: nextMove)
+                        print("Emergency move -- row: \(emergencyMove.row), col: \(emergencyMove.col)")
+                        break
+                    }
+                }
+            case "cols":
+                for row in 0...n-1 {
+                    if grid[row][num] == empty {
+                        let nextMove = Move(row: num, col: row)
+                        emergencyMove.updateMove(move: nextMove)
+                        print("Emergency move -- row: \(emergencyMove.row), col: \(emergencyMove.col)")
+                        break
+                    }
+                }
+            default:
+                break
+            }
+    }
+    
+  //#############################################################  #############################################################
+    func findBestMove(board: Board) -> Move{
+        
+        print("\nEmpty cells left: \(numberEmpty())\n loading...")
+        
+        var bestMove = Move(row: 0, col: 0)
+        
+        //if there are less than 10 cells left, then call miniMax
+        if numberEmpty() <= 10 {
+            return miniMax(board: board, player: p1)
+        //if opponent has n-1 rows / cols filled, then BLOCK!
+        } else if blockNeeded == true {
+            return emergencyMove
+            blockNeeded = false
+        //if corners are empty, fill them first
+        } else if isCornersEmpty() {
+            return nextCorner
+        }
+        
+        
+        
+        
+        return bestMove
+    }
+    
+    
+    //miniMax function with alpha-beta pruning
     func miniMax(board: Board, player: String) -> Move {
-        eval = eval + 1
     
         var moves = [Move]()
         
