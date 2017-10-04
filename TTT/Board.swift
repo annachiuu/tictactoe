@@ -17,6 +17,8 @@ class Board: NSObject, NSCopying {
     var empty = " "
     var currentPlayer = "X"
     
+    var humanPreviousMove = Move(row: 0, col: 0)
+    
     var n: Int!
     
     var nextCompMove = Move(row: 0, col: 0)
@@ -123,13 +125,17 @@ class Board: NSObject, NSCopying {
     //####################functions for checkWin() ##############################
     func countRow(row: Int, player: String) -> Int {
         var count = 0
+        var emptyCell = 0
         for cell in 0...n-1 {
             if grid[row][cell] == player {
                 count = count + 1
             }
+            if grid[row][cell] == empty {
+                emptyCell = emptyCell + 1
+            }
         }
-        
-        if count == n-1 && numberEmpty() >= 10 {
+        // if n-1 cells in a row is occupied by human, then emergency block needed
+        if count == n-1 && numberEmpty() >= 10 && emptyCell == 1 {
             blockNeeded = true
             findBlock(origin: "rows" , num: row)
         }
@@ -138,12 +144,17 @@ class Board: NSObject, NSCopying {
     
     func countCol(col: Int, player: String) -> Int {
         var count = 0
+        var emptyCell = 0
         for cell in 0...n-1 {
             if grid[cell][col] == player {
                 count = count + 1
             }
+            if grid[cell][col] == empty {
+                emptyCell = emptyCell + 1
+            }
         }
-        if count == n-1 && numberEmpty() >= 10 {
+        // if n-1 cells in a column is occupied by human, then emergency block needed
+        if count == n-1 && numberEmpty() >= 10 && emptyCell == 1 {
             blockNeeded = true
             findBlock(origin: "cols" , num: col)
         }
@@ -224,22 +235,44 @@ class Board: NSObject, NSCopying {
                     if grid[num][col] == empty {
                         let nextMove = Move(row: num, col: col)
                         emergencyMove.updateMove(move: nextMove)
-                        print("Emergency move -- row: \(emergencyMove.row), col: \(emergencyMove.col)")
+//                        print("Emergency move -- row: \(emergencyMove.row), col: \(emergencyMove.col)")
                         break
                     }
                 }
             case "cols":
                 for row in 0...n-1 {
                     if grid[row][num] == empty {
-                        let nextMove = Move(row: num, col: row)
+                        let nextMove = Move(row: row, col: num)
                         emergencyMove.updateMove(move: nextMove)
-                        print("Emergency move -- row: \(emergencyMove.row), col: \(emergencyMove.col)")
+//                        print("Emergency move -- row: \(emergencyMove.row), col: \(emergencyMove.col)")
                         break
                     }
                 }
             default:
                 break
             }
+    }
+  //############################################################
+    var layer = 0
+    //Next computer move at the 4 edges of human's player - if all taken, work inwards
+    func findEdgeMove(human: Move, layer: Int) -> Move{
+        var top = Move(row: 0+layer, col: human.col)
+        var left = Move(row: human.row, col: 0+layer)
+        var right = Move(row: human.row, col: n-1-layer)
+        var bottom = Move(row: n-1-layer, col: human.col)
+        
+        if grid[0+layer][human.col] == empty {
+            return top
+        } else if grid[human.row][0+layer] == empty {
+            return left
+        } else if grid[human.row][n-1-layer] == empty {
+            return right
+        } else if grid[n-1-layer][human.col] == empty {
+            return bottom
+        } else {
+            return findEdgeMove(human: human, layer: layer + 1)
+        }
+        
     }
     
   //#############################################################  #############################################################
@@ -254,15 +287,16 @@ class Board: NSObject, NSCopying {
             return miniMax(board: board, player: p1)
         //if opponent has n-1 rows / cols filled, then BLOCK!
         } else if blockNeeded == true {
-            return emergencyMove
             blockNeeded = false
+            return emergencyMove
         //if corners are empty, fill them first
         } else if isCornersEmpty() {
             return nextCorner
+        } else {
+            return findEdgeMove(human: humanPreviousMove, layer: layer)
+            print("called findEdgeMove")
         }
-        
-        
-        
+    
         
         return bestMove
     }

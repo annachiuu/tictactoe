@@ -88,6 +88,7 @@ func humanTurn() {
         if (board.isEmpty(row: row, col: col)) {
             validMove = true
             board.addMove(row: Int(row), col: Int(col), p: human)
+            board.humanPreviousMove = Move(row: row, col: col)
             print(board.printGrid())
         } else {
             validMove = false
