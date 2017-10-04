@@ -170,11 +170,10 @@ class Board: NSObject, NSCopying {
     
     //#############################################################
     
+    var eval = 0
     
-  
-    //count the depth of the recursion so the best move takes the least moves
-
     func miniMax(board: Board, player: String) -> Move {
+        eval = eval + 1
     
         var moves = [Move]()
         
@@ -182,32 +181,28 @@ class Board: NSObject, NSCopying {
         if board.checkWin(player: p1) {
             //temp Move to pass the score back up the recursion
             let tempMove = Move(row: 0, col: 0)
-            tempMove.depth = n-board.numberEmpty()
             tempMove.updateScore(score: 10)
             return tempMove
         } else if board.checkWin(player: p2) {
             let tempMove = Move(row: 0, col: 0)
-            tempMove.depth = n-board.numberEmpty()
             tempMove.updateScore(score: -10)
             return tempMove
         } else if board.fullCount() {
             let move = Move(row: 0, col: 0)
-            move.depth = n-board.numberEmpty()
             move.score = 0
             return move
         }
         
-        
+        var bestMove = Move(row: 0, col: 0)
         
         //traverse through empty slots
-        for row in 0...n-1 {
+        outerloop: for row in 0...n-1 {
             for col in 0...n-1 {
                 if board.isEmpty(row: row, col: col) {
                     
                     // init move and take down coords
                     var move = Move(row: row, col: col)
                     // store the depth of the board
-                    move.depth = n-board.numberEmpty()
                     board.addMove(row: row, col: col, p: player)
                     
                     //recursion to get score from terminating nodes
@@ -225,22 +220,26 @@ class Board: NSObject, NSCopying {
                     //append move to moves
                     moves.append(move)
                     
+                    //if p1 move.score = 10 then break
+                    if move.score == 10 && player == p1 {
+                        break outerloop
+                    //if p2 move.score = -10 then break
+                    } else if move.score == -10 && player == p2 {
+                        break outerloop
+                    }
+                    
                 }
             }
         }
-        var bestMove = Move(row: 0, col: 0)
-        bestMove.depth = n+1
-
+        
+        
         //chose the (best) move according to player
         if player == p1 {
             bestMove.updateScore(score: -9999)
             for move in moves {
                 //choose highest score for computer
                 if move.score! >= bestMove.score! {
-                    //if both moves recieve same high score, choose that with the fast win
-                    if move.depth! < bestMove.depth! {
                         bestMove.updateMove(move: move)
-                    }
                 }
             }
         } else if player == p2 {
@@ -248,13 +247,11 @@ class Board: NSObject, NSCopying {
             for move in moves {
                 //chose lowest score for human
                 if move.score! <= bestMove.score! {
-                    if move.depth! < bestMove.depth! {
                         bestMove.updateMove(move: move)
-                    }
                 }
             }
         }
-        
+    
         //update the move with current depth of board
         return bestMove
     }

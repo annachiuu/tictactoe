@@ -98,26 +98,28 @@ func humanTurn() {
 }
 
 func compTurn() {
+    board.eval = 0
     let move = board.miniMax(board: board, player: comp)
     print("computer plays: row:\(move.row+1)  col:\(move.row+1) \n")
     board.addMove(row: move.row, col: move.col, p: comp)
     print(board.printGrid())
-    
+}
+
+
+func evaluateCondition() {
+    if board.checkWin(player: human) {
+        print("You win!!")
+        exit(0)
+    } else if board.checkWin(player: comp) {
+        print("Computer Wins")
+        exit(0)
     }
+}
  
 //GAME PLAY HERE
 while(!board.fullCount()) {
     
-    if(board.checkWin(player: currentPlayer)) {
-        if currentPlayer == human {
-            print("You Win!!")
-            exit(0)
-        } else if currentPlayer == comp {
-            print("Computer Wins")
-            exit(0)
-        }
-    }
-    
+    evaluateCondition()
     
     switchPlayer()
     
@@ -126,6 +128,8 @@ while(!board.fullCount()) {
     } else {
         compTurn()
     }
+    
+    evaluateCondition()
     
     if board.fullCount() {
         print("Draw")
