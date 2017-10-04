@@ -341,8 +341,6 @@ class Board: NSObject, NSCopying {
     
     func findBestMove(board: Board) -> Move{
         
-        print("\nEmpty cells left: \(numberEmpty())\n loading...")
-        
         var bestMove = Move(row: 0, col: 0)
         
         //if there are less than 9 cells left and board n <= 5, or cells left <= 5 then call miniMax

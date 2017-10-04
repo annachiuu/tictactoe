@@ -10,18 +10,17 @@
 import Foundation
 import Darwin
 
-var board = Board() //init main board
+//Init board class
+var board = Board()
 
 let human = "O"
 let comp = "X"
-
-let restart = ""
 
 //for human
 var row = 0
 var col = 0
 
-var currentPlayer = comp
+var currentPlayer = ""
 
 func switchPlayer() {
     if currentPlayer == human {
@@ -30,6 +29,9 @@ func switchPlayer() {
         currentPlayer = human
     }
 }
+
+
+//################## INITIALIZE BOARD WITH N #####################
 
 print("Tic Tac Toe by Anna Chiu")
 
@@ -49,6 +51,22 @@ while (n < 3 || n > 100) {
 }
 
 board.makeGrid(n: n)
+
+//###################### Choose starting player ###################
+
+
+var playerResponse = ""
+while (currentPlayer != human && currentPlayer != comp) {
+    print("Do you want to start first? \nPlease enter y/n: ")
+    playerResponse = readLine()!
+    if playerResponse == "y" || playerResponse == "Y" {
+        currentPlayer = human
+    } else if playerResponse == "n" || playerResponse == "N" {
+        currentPlayer = comp
+    }
+}
+
+//###############################################################
 
 func humanInsert() {
     print("Where would you like to put your next move?")
@@ -119,14 +137,15 @@ func evaluateCondition() {
     }
 }
 
+
+// ####################### GAME BEGINS HERE ########################
+
 print(board.printGrid())
 
-//GAME PLAY HERE
 while(!board.fullCount()) {
     
     evaluateCondition()
     
-    switchPlayer()
     
     if currentPlayer == human {
         humanTurn()
@@ -140,6 +159,7 @@ while(!board.fullCount()) {
         print("Draw")
         exit(0)
     }
+    switchPlayer()
 }
 
 
