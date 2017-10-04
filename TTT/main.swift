@@ -99,6 +99,7 @@ func humanTurn() {
 
 func compTurn() {
     let move = board.miniMax(board: board, player: comp)
+    print("\nNumber of evaluations: \(board.eval) \n")
     print("computer plays: row:\(move.row+1)  col:\(move.row+1) \n")
     board.addMove(row: move.row, col: move.col, p: comp)
     print(board.printGrid())
