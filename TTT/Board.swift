@@ -23,6 +23,7 @@ class Board: NSObject, NSCopying {
     
     var nextCompMove = Move(row: 0, col: 0)
     
+    
     func makeGrid(n: Int) {
         self.n = n
         for _ in 1...n { //each col
@@ -39,8 +40,14 @@ class Board: NSObject, NSCopying {
     func printGrid() -> String {
         
         var gridOutput = ""
+        for n in 1...n {
+            gridOutput = gridOutput + "  \(n) "
+        }
+        
+        gridOutput = gridOutput + "\n"
         
         for row in 0...n-1 {
+            gridOutput = gridOutput + "\(row + 1) "
             for col in 0...n-1 {
                 if col != n-1 {
                 gridOutput = gridOutput + grid[row][col] + " | "
@@ -49,7 +56,7 @@ class Board: NSObject, NSCopying {
                 }
             }
             if row != n-1 {
-            gridOutput = gridOutput + "\n"
+            gridOutput = gridOutput + "\n "
                 for _ in 1...n {
                 gridOutput = gridOutput + " -  "
             }
@@ -163,22 +170,40 @@ class Board: NSObject, NSCopying {
     
     func countDiagLR(player: String) -> Int {
         var count = 0
+        var emptyCell = 0
         for cell in 0...n-1 {
             if grid[cell][cell] == player {
                 count = count + 1
             }
+            if grid[cell][cell] == empty {
+                emptyCell = emptyCell + 1
+            }
+
+        }
+     // if n-1 cells in a diag is occupied by human, then emergency block needed
+        if count == n-1 && numberEmpty() >= 10 && emptyCell == 1 {
+            blockNeeded = true
+            findBlock(origin: "diagLR" , num: col)
         }
         return count
     }
     
     func countDiagRL(player: String) -> Int {
         var count = 0
+        var emptyCell = 0
         var col = n-1
         for row in 0...n-1 {
             if grid[row][col] == player {
                 count = count + 1
             }
+            if grid[row][col] == empty {
+                emptyCell = emptyCell + 1
+            }
             col = col - 1
+        }
+        if count == n-1 && numberEmpty() >= 10 && emptyCell == 1 {
+            blockNeeded = true
+            findBlock(origin: "diagRL"  , num: col)
         }
         return count
     }
@@ -194,7 +219,7 @@ class Board: NSObject, NSCopying {
     
     
     
-    //#############################################################
+    //#############################  Fill the corners first  ################################
     
     var corners = [Move]()
     var nextCorner = Move(row: 0, col: 0)
@@ -222,7 +247,7 @@ class Board: NSObject, NSCopying {
     }
 
     
-  //#############################################################
+  //#########################   Emergency Block when N-1 row / col is filled   ####################################
     var blockNeeded = false
     var emergencyMove = Move(row: 0, col: 0)
     
@@ -248,11 +273,29 @@ class Board: NSObject, NSCopying {
                         break
                     }
                 }
+            case "diagLR":
+                for cell in 0...n-1 {
+                    if grid[cell][cell] == empty {
+                        let nextMove = Move(row: cell, col: cell)
+                        emergencyMove.updateMove(move: nextMove)
+                        break
+                    }
+                }
+            case "diagRL":
+                var col = n-1
+                for row in 0...n-1 {
+                    if grid[row][col] == empty {
+                        let nextMove = Move(row: row, col: col)
+                        emergencyMove.updateMove(move: nextMove)
+                        break
+                    }
+                    col = col - 1
+                }
             default:
                 break
             }
     }
-  //############################################################
+  //######################  Find Edge Move According to Human Move ######################################
     var layer = 0
     //Next computer move at the 4 edges of human's player - if all taken, work inwards
     func findEdgeMove(human: Move, layer: Int) -> Move{
@@ -269,13 +312,32 @@ class Board: NSObject, NSCopying {
             return right
         } else if grid[n-1-layer][human.col] == empty {
             return bottom
+        } else if layer <= n-1 {
+            if findEdgeMove(human: human, layer: layer + 1) != nil  {
+                return findEdgeMove(human: human, layer: layer + 1)
+                //if that fails - then next open spot until miniMax kicks in
+            } else {
+                return nextOpenSpot()
+            }
         } else {
-            return findEdgeMove(human: human, layer: layer + 1)
+            return nextOpenSpot()
         }
         
     }
     
-  //#############################################################  #############################################################
+    func nextOpenSpot() -> Move {
+        for row in 0...n-1 {
+            for col in 0...n-1 {
+                if grid[row][col] == empty {
+                    return Move(row: row, col: col)
+                }
+            }
+        }
+        return Move(row: 0, col: 0)
+    }
+    
+  //############################ FIND NEXT BEST MOVE FOR COMPUTER   #################################
+    
     func findBestMove(board: Board) -> Move{
         
         print("\nEmpty cells left: \(numberEmpty())\n loading...")
@@ -283,24 +345,41 @@ class Board: NSObject, NSCopying {
         var bestMove = Move(row: 0, col: 0)
         
         //if there are less than 10 cells left, then call miniMax
-        if numberEmpty() <= 10 {
+        if numberEmpty() <= 9 {
+            getEmptyCells()
             return miniMax(board: board, player: p1)
-        //if opponent has n-1 rows / cols filled, then BLOCK!
+        //if opponent has n-1 rows / cols filled, then BLOCK! or vice versa if winning opp, go for it!
         } else if blockNeeded == true {
             blockNeeded = false
             return emergencyMove
         //if corners are empty, fill them first
         } else if isCornersEmpty() {
+            
             return nextCorner
+        //then fill the edges
         } else {
+            //findEdgeMove also takes care of when there are no edge moves left - then take next empty spot until miniMax kicks in
             return findEdgeMove(human: humanPreviousMove, layer: layer)
-            print("called findEdgeMove")
         }
-    
         
         return bestMove
     }
     
+    
+    
+//    ####################### MINIMAX ###############################
+    
+    var emptyCells = [Move]()
+    func getEmptyCells() {
+        for row in 0...n-1 {
+            for col in 0...n-1 {
+                if grid[row][col] == empty {
+                    var move = Move(row: row, col: col)
+                    emptyCells.append(move)
+                }
+            }
+        }
+    }
     
     //miniMax function with alpha-beta pruning
     func miniMax(board: Board, player: String) -> Move {
@@ -328,8 +407,11 @@ class Board: NSObject, NSCopying {
         //traverse through empty slots
         outerloop: for row in 0...n-1 {
             for col in 0...n-1 {
+        
+//                outerloop: for cell in emptyCells {
                 if board.isEmpty(row: row, col: col) {
-                    
+//                    if board.isEmpty(row: cell.row, col: cell.col) {
+
                     // init move and take down coords
                     var move = Move(row: row, col: col)
                     // store the depth of the board
@@ -385,7 +467,8 @@ class Board: NSObject, NSCopying {
         //update the move with current depth of board
         return bestMove
     }
-    
+   
+
     func pInvalid() {
         print("Invalid Integer")
     }

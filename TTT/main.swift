@@ -89,6 +89,7 @@ func humanTurn() {
             validMove = true
             board.addMove(row: Int(row), col: Int(col), p: human)
             board.humanPreviousMove = Move(row: row, col: col)
+            board.blockNeeded = false
             print(board.printGrid())
         } else {
             validMove = false
